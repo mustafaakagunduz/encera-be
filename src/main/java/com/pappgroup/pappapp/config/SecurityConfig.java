@@ -74,6 +74,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/auth/logout").permitAll()
 
+                        //sifre sıfırlama endpoint'leri
+                        .requestMatchers("/api/auth/forgot-password").permitAll()
+                        .requestMatchers("/api/auth/reset-password").permitAll()
+                        .requestMatchers("/api/auth/validate-reset-token").permitAll()
+
                         // Public endpoint'ler
                         .requestMatchers("/api/listings/public/**").permitAll()
                         .requestMatchers("/api/categories/public/**").permitAll()

@@ -65,4 +65,10 @@ public class User {
 
     @Column(name = "last_verification_attempt")
     private LocalDateTime lastVerificationAttempt;
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expires_at")
+    private LocalDateTime resetTokenExpiresAt;
 }

@@ -1,13 +1,12 @@
 package com.pappgroup.pappapp.controller;
 
-import com.pappgroup.pappapp.dto.request.EmailVerificationRequest;
-import com.pappgroup.pappapp.dto.request.LoginRequest;
-import com.pappgroup.pappapp.dto.request.RegisterRequest;
-import com.pappgroup.pappapp.dto.request.ResendCodeRequest;
+import com.pappgroup.pappapp.dto.request.*;
 import com.pappgroup.pappapp.dto.response.AuthResponse;
+import com.pappgroup.pappapp.dto.response.PasswordResetResponse;
 import com.pappgroup.pappapp.dto.response.VerificationResponse;
 import com.pappgroup.pappapp.service.AuthService;
 import com.pappgroup.pappapp.service.EmailVerificationService;
+import com.pappgroup.pappapp.service.PasswordResetService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private PasswordResetService passwordResetService;
 
     @Autowired
     private EmailVerificationService emailVerificationService;
@@ -109,6 +111,39 @@ public class AuthController {
     @PostMapping("/resend-verification-code")
     public ResponseEntity<VerificationResponse> resendVerificationCode(@Valid @RequestBody ResendCodeRequest request) {
         VerificationResponse response = emailVerificationService.sendVerificationCode(request.getEmail());
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<PasswordResetResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        PasswordResetResponse response = passwordResetService.sendResetPasswordEmail(request);
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<PasswordResetResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        PasswordResetResponse response = passwordResetService.resetPassword(request);
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/validate-reset-token")
+    public ResponseEntity<PasswordResetResponse> validateResetToken(@RequestParam String token) {
+        PasswordResetResponse response = passwordResetService.validateResetToken(token);
 
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);

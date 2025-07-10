@@ -94,4 +94,57 @@ public class EmailService {
             throw new RuntimeException("Email gönderim hatası: " + e.getMessage());
         }
     }
+    public void sendPasswordResetEmail(String toEmail, String userName, String resetToken) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, appName);
+            helper.setTo(toEmail);
+            helper.setSubject("Şifre Sıfırlama - " + appName);
+
+            Context context = new Context();
+            context.setVariable("userName", userName);
+            context.setVariable("resetToken", resetToken);
+            context.setVariable("appName", appName);
+            // Frontend reset URL'i - bu kısmı frontend URL'nize göre ayarlayın
+            context.setVariable("resetUrl", "http://localhost:3000/reset-password?token=" + resetToken);
+
+            String htmlContent = templateEngine.process("password-reset", context);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Şifre sıfırlama emaili gönderilemedi: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Email gönderim hatası: " + e.getMessage());
+        }
+    }
+
+    public void sendPasswordChangeConfirmationEmail(String toEmail, String userName) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, appName);
+            helper.setTo(toEmail);
+            helper.setSubject("Şifre Değişikliği Onayı - " + appName);
+
+            Context context = new Context();
+            context.setVariable("userName", userName);
+            context.setVariable("appName", appName);
+
+            String htmlContent = templateEngine.process("password-change-confirmation", context);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Şifre değişikliği onay emaili gönderilemedi: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Email gönderim hatası: " + e.getMessage());
+        }
+    }
+
 }
