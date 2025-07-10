@@ -1,9 +1,13 @@
 package com.pappgroup.pappapp.controller;
 
+import com.pappgroup.pappapp.dto.request.EmailVerificationRequest;
 import com.pappgroup.pappapp.dto.request.LoginRequest;
 import com.pappgroup.pappapp.dto.request.RegisterRequest;
+import com.pappgroup.pappapp.dto.request.ResendCodeRequest;
 import com.pappgroup.pappapp.dto.response.AuthResponse;
+import com.pappgroup.pappapp.dto.response.VerificationResponse;
 import com.pappgroup.pappapp.service.AuthService;
+import com.pappgroup.pappapp.service.EmailVerificationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private EmailVerificationService emailVerificationService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
@@ -86,5 +93,27 @@ public class AuthController {
 
         public String getMessage() { return message; }
         public void setMessage(String message) { this.message = message; }
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<VerificationResponse> verifyEmail(@Valid @RequestBody EmailVerificationRequest request) {
+        VerificationResponse response = emailVerificationService.verifyEmail(request);
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/resend-verification-code")
+    public ResponseEntity<VerificationResponse> resendVerificationCode(@Valid @RequestBody ResendCodeRequest request) {
+        VerificationResponse response = emailVerificationService.sendVerificationCode(request.getEmail());
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

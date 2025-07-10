@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     @Autowired
+    private EmailVerificationService emailVerificationService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -42,23 +45,19 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-        user.setEnabled(true);
+        user.setEnabled(false); // Email doğrulanana kadar pasif
+        user.setIsVerified(false); // Email doğrulanmamış
 
         User savedUser = userRepository.save(user);
 
-        // Token oluştur
-        String token = jwtTokenProvider.generateToken(
-                savedUser.getEmail(),
-                savedUser.getRole().name(),
-                savedUser.getId()
-        );
+        // Doğrulama kodu gönder
+        emailVerificationService.sendVerificationCode(savedUser.getEmail());
 
-        String refreshToken = jwtTokenProvider.generateRefreshToken(savedUser.getEmail());
-
-        // Response oluştur
+        // Response oluştur (token yok çünkü henüz doğrulanmamış)
         UserResponse userResponse = userService.convertToUserResponse(savedUser);
 
-        return new AuthResponse(token, refreshToken, userResponse);
+        // AuthResponse'a message alanı ekleyeceğiz
+        return new AuthResponse(null, null, userResponse, "Kayıt başarılı. Doğrulama kodu email adresinize gönderildi.");
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -68,6 +67,11 @@ public class AuthService {
         // Şifre kontrolü
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid credentials");
+        }
+
+        // Email doğrulanmış mı kontrolü
+        if (!user.getIsVerified()) {
+            throw new RuntimeException("Email doğrulaması yapılmamış. Lütfen emailinizi kontrol edin.");
         }
 
         // Kullanıcı aktif mi?
