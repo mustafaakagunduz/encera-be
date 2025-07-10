@@ -19,6 +19,12 @@ import java.util.Map;
 @Service
 public class EmailService {
 
+    @Value("${app.frontend.url:http://localhost:3000}")
+    private String frontendUrl;
+
+    @Value("${app.frontend.reset-password.path:/reset-password}")
+    private String resetPasswordPath;
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -107,8 +113,8 @@ public class EmailService {
             context.setVariable("userName", userName);
             context.setVariable("resetToken", resetToken);
             context.setVariable("appName", appName);
-            // Frontend reset URL'i - bu kısmı frontend URL'nize göre ayarlayın
-            context.setVariable("resetUrl", "http://localhost:3000/reset-password?token=" + resetToken);
+            // Artık configurable frontend URL
+            context.setVariable("resetUrl", frontendUrl + resetPasswordPath + "?token=" + resetToken);
 
             String htmlContent = templateEngine.process("password-reset", context);
             helper.setText(htmlContent, true);
@@ -121,7 +127,6 @@ public class EmailService {
             throw new RuntimeException("Email gönderim hatası: " + e.getMessage());
         }
     }
-
     public void sendPasswordChangeConfirmationEmail(String toEmail, String userName) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
