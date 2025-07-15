@@ -113,8 +113,8 @@ public class EmailService {
             context.setVariable("userName", userName);
             context.setVariable("resetToken", resetToken);
             context.setVariable("appName", appName);
-            // Artık configurable frontend URL
-            context.setVariable("resetUrl", frontendUrl + resetPasswordPath + "?token=" + resetToken);
+            // Düzeltme: ikinci parametre & ile başlamalı
+            context.setVariable("resetUrl", frontendUrl + resetPasswordPath + "&token=" + resetToken);
 
             String htmlContent = templateEngine.process("password-reset", context);
             helper.setText(htmlContent, true);
@@ -127,6 +127,7 @@ public class EmailService {
             throw new RuntimeException("Email gönderim hatası: " + e.getMessage());
         }
     }
+
     public void sendPasswordChangeConfirmationEmail(String toEmail, String userName) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
