@@ -59,6 +59,8 @@ public class PropertyCreateRequest {
 
     private Boolean furnished = false;
 
+    private Boolean pappSellable = false;
+
     private RoomConfiguration roomConfiguration;
 
     @DecimalMin(value = "0.0", message = "Aidat negatif olamaz")

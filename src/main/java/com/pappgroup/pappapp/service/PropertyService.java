@@ -386,6 +386,7 @@ public class PropertyService {
         property.setSecurity(request.getSecurity());
         property.setDescription(request.getDescription());
         property.setFurnished(request.getFurnished());
+        property.setPappSellable(request.getPappSellable()); // YENİ ALAN EKLENDİ
         property.setRoomConfiguration(request.getRoomConfiguration());
         property.setMonthlyFee(request.getMonthlyFee());
         property.setDeposit(request.getDeposit());
