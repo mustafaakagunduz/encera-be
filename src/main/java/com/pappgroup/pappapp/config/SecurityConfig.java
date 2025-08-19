@@ -74,18 +74,27 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/auth/logout").permitAll()
 
-                        //sifre sıfırlama endpoint'leri
+                        // Şifre sıfırlama endpoint'leri
                         .requestMatchers("/api/auth/forgot-password").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
                         .requestMatchers("/api/auth/validate-reset-token").permitAll()
 
-                        // Public endpoint'ler
+                        // Property Public endpoint'ler - herkese açık
+                        .requestMatchers("/api/properties/public/**").permitAll()
+
+                        // Diğer Public endpoint'ler
                         .requestMatchers("/api/listings/public/**").permitAll()
                         .requestMatchers("/api/categories/public/**").permitAll()
                         .requestMatchers("/api/locations/public/**").permitAll()
 
                         // Test endpoint'leri (sadece development için)
                         .requestMatchers("/api/test/**").permitAll()
+
+                        // Property Admin endpoint'leri
+                        .requestMatchers("/api/properties/admin/**").hasRole("ADMIN")
+
+                        // Property User endpoint'leri
+                        .requestMatchers("/api/properties/user/**").hasAnyRole("USER", "ADMIN")
 
                         // Admin endpoint'leri
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
