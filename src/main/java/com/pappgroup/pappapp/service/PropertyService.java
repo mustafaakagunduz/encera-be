@@ -325,6 +325,11 @@ public class PropertyService {
         return convertToResponse(updatedProperty);
     }
 
+    public Page<PropertyResponse> getApprovedProperties(Pageable pageable) {
+        Page<Property> properties = propertyRepository.findByApprovedTrueAndActiveTrue(pageable);
+        return properties.map(this::convertToResponse);
+    }
+
     @Transactional
     public PropertyResponse adminUpdateProperty(Long id, PropertyUpdateRequest request) {
         Property existingProperty = propertyRepository.findById(id)

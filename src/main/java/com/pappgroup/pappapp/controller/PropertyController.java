@@ -391,6 +391,8 @@ public class PropertyController {
 
     // ========== ADMIN ENDPOİNTLERİ ==========
 
+
+
     // Onay bekleyen ilanlar
     @GetMapping("/admin/pending-approval")
     @PreAuthorize("hasRole('ADMIN')")
@@ -411,6 +413,19 @@ public class PropertyController {
             @PageableDefault(size = 20, sort = "reportCount", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
             Page<PropertyResponse> properties = propertyService.getReportedProperties(pageable);
+            return ResponseEntity.ok(properties);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Onaylanmış ilanlar
+    @GetMapping("/admin/approved")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<PropertyResponse>> getApprovedProperties(
+            @PageableDefault(size = 20, sort = "approvedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        try {
+            Page<PropertyResponse> properties = propertyService.getApprovedProperties(pageable);
             return ResponseEntity.ok(properties);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
