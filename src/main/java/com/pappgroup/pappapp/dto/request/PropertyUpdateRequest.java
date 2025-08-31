@@ -50,6 +50,8 @@ public class PropertyUpdateRequest {
 
     private Boolean parking = false;
 
+    private Boolean approved;
+
     private Boolean balcony = false;
 
     private Boolean security = false;

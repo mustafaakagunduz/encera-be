@@ -417,6 +417,16 @@ public class PropertyService {
         property.setRoomConfiguration(request.getRoomConfiguration());
         property.setMonthlyFee(request.getMonthlyFee());
         property.setDeposit(request.getDeposit());
+
+        // YENİ EKLENEN - İlan editlendiğinde pending durumuna geçmesi için
+        if (request.getApproved() != null) {
+            property.setApproved(request.getApproved());
+            // Eğer approved false yapılıyorsa, approvedAt ve approvedBy temizlenir
+            if (!request.getApproved()) {
+                property.setApprovedAt(null);
+                property.setApprovedBy(null);
+            }
+        }
     }
 
     private PropertyResponse convertToResponse(Property property) {
