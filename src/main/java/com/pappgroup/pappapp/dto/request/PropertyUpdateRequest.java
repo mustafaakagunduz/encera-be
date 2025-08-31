@@ -29,6 +29,8 @@ public class PropertyUpdateRequest {
     @Size(max = 100, message = "İlçe adı 100 karakterden uzun olamaz")
     private String district;
 
+    private Boolean active;
+
     @NotBlank(message = "Mahalle seçilmelidir")
     @Size(max = 100, message = "Mahalle adı 100 karakterden uzun olamaz")
     private String neighborhood;

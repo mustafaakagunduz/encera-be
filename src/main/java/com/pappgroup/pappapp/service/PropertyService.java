@@ -427,6 +427,19 @@ public class PropertyService {
                 property.setApprovedBy(null);
             }
         }
+
+        if (request.getActive() != null) {
+            boolean wasInactive = !property.getActive();
+            property.setActive(request.getActive());
+
+            // Eğer pasif ilan editleniyorsa, aktif yap ve onay bekliyor durumuna geç
+            if (wasInactive && request.getActive()) {
+                property.setApproved(false);
+                property.setApprovedAt(null);
+                property.setApprovedBy(null);
+                property.setLastPublished(LocalDateTime.now());
+            }
+        }
     }
 
     private PropertyResponse convertToResponse(Property property) {
