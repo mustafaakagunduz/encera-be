@@ -50,7 +50,8 @@ public class PropertyService {
     }
 
     public Page<PropertySummaryResponse> getPropertiesByPropertyType(PropertyType propertyType, Pageable pageable) {
-        Page<Property> properties = propertyRepository.findByPropertyType(propertyType, pageable);
+
+        Page<Property> properties = propertyRepository.findByPropertyTypeAndApprovedTrueAndActiveTrue(propertyType, pageable);
         return properties.map(this::convertToSummaryResponse);
     }
 

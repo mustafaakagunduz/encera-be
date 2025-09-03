@@ -26,6 +26,12 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     // Kullanıcının ilan sayısı
     long countByUser(User user);
 
+    // Aktif ve onaylanmış konut ilanları
+    Page<Property> findByPropertyTypeAndApprovedTrueAndActiveTrue(
+            PropertyType propertyType,
+            Pageable pageable
+    );
+
     // Listing type'a göre filtrele
     Page<Property> findByListingType(ListingType listingType, Pageable pageable);
 
