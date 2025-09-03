@@ -180,6 +180,9 @@ public class PropertyController {
             @RequestParam(required = false) Boolean furnished,
             @RequestParam(required = false) Boolean elevator,
             @RequestParam(required = false) Boolean parking,
+            @RequestParam(required = false) Boolean balcony,
+            @RequestParam(required = false) Boolean security,
+            @RequestParam(required = false) Integer minRoomCount,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
             PropertySearchRequest searchRequest = new PropertySearchRequest();
@@ -194,6 +197,9 @@ public class PropertyController {
             searchRequest.setFurnished(furnished);
             searchRequest.setElevator(elevator);
             searchRequest.setParking(parking);
+            searchRequest.setBalcony(balcony);
+            searchRequest.setSecurity(security);
+            searchRequest.setMinRoomCount(minRoomCount);
 
             Page<PropertySummaryResponse> properties = propertyService.searchProperties(searchRequest, pageable);
             return ResponseEntity.ok(properties);

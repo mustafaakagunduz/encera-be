@@ -103,6 +103,9 @@ public class PropertyService {
                 searchRequest.getFurnished(),
                 searchRequest.getElevator(),
                 searchRequest.getParking(),
+                searchRequest.getBalcony(),
+                searchRequest.getSecurity(),
+                searchRequest.getMinRoomCount(),
                 pageable
         );
         return properties.map(this::convertToSummaryResponse);

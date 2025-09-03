@@ -132,15 +132,18 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             "p.approved = true AND p.active = true AND " +
             "(:listingType IS NULL OR p.listingType = :listingType) AND " +
             "(:propertyType IS NULL OR p.propertyType = :propertyType) AND " +
-            "(:city IS NULL OR LOWER(p.city) = LOWER(:city)) AND " +
-            "(:district IS NULL OR LOWER(p.district) = LOWER(:district)) AND " +
+            "(:city IS NULL OR UPPER(p.city) = UPPER(:city)) AND " +
+            "(:district IS NULL OR UPPER(p.district) = UPPER(:district)) AND " +
             "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
             "(:minArea IS NULL OR p.grossArea >= :minArea) AND " +
             "(:maxArea IS NULL OR p.grossArea <= :maxArea) AND " +
             "(:furnished IS NULL OR p.furnished = :furnished) AND " +
             "(:elevator IS NULL OR p.elevator = :elevator) AND " +
-            "(:parking IS NULL OR p.parking = :parking)")
+            "(:parking IS NULL OR p.parking = :parking) AND " +
+            "(:balcony IS NULL OR p.balcony = :balcony) AND " +
+            "(:security IS NULL OR p.security = :security) AND " +
+            "(:minRoomCount IS NULL OR p.roomConfiguration.roomCount >= :minRoomCount)")
     Page<Property> findActivePropertiesWithFilters(@Param("listingType") ListingType listingType,
                                                    @Param("propertyType") PropertyType propertyType,
                                                    @Param("city") String city,
@@ -152,5 +155,8 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                                                    @Param("furnished") Boolean furnished,
                                                    @Param("elevator") Boolean elevator,
                                                    @Param("parking") Boolean parking,
+                                                   @Param("balcony") Boolean balcony,
+                                                   @Param("security") Boolean security,
+                                                   @Param("minRoomCount") Integer minRoomCount,
                                                    Pageable pageable);
 }
