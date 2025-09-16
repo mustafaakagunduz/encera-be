@@ -11,6 +11,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "properties")
@@ -85,6 +87,18 @@ public class Property {
 
     @Column(precision = 15, scale = 2)
     private BigDecimal deposit;
+
+    // Bina bilgileri
+    private Integer buildingAge;
+    
+    private Integer totalFloors;
+    
+    private Integer currentFloor;
+    
+    @ElementCollection
+    @CollectionTable(name = "property_heating", joinColumns = @JoinColumn(name = "property_id"))
+    @Column(name = "heating_type")
+    private List<String> heatingTypes = new ArrayList<>();
 
     // İlan durumu ve onay sistemi
     @Column(nullable = false)

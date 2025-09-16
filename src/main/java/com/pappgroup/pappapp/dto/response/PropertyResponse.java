@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class PropertyResponse {
@@ -54,6 +55,15 @@ public class PropertyResponse {
     private BigDecimal monthlyFee;
 
     private BigDecimal deposit;
+
+    // Bina bilgileri
+    private Integer buildingAge;
+    
+    private Integer totalFloors;
+    
+    private Integer currentFloor;
+    
+    private List<String> heatingTypes;
 
     // İlan durumu
     private Boolean active;

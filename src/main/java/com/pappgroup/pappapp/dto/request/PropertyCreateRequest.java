@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class PropertyCreateRequest {
@@ -70,4 +71,18 @@ public class PropertyCreateRequest {
     @DecimalMin(value = "0.0", message = "Depozito negatif olamaz")
     @Digits(integer = 13, fraction = 2, message = "Depozito formatı geçersiz")
     private BigDecimal deposit;
+
+    @Min(value = 0, message = "Bina yaşı negatif olamaz")
+    @Max(value = 200, message = "Bina yaşı 200'den fazla olamaz")
+    private Integer buildingAge;
+
+    @Min(value = 1, message = "Kat sayısı en az 1 olmalıdır")
+    @Max(value = 100, message = "Kat sayısı 100'den fazla olamaz")
+    private Integer totalFloors;
+
+    @Min(value = 0, message = "Bulunduğu kat negatif olamaz")
+    @Max(value = 100, message = "Bulunduğu kat 100'den fazla olamaz")
+    private Integer currentFloor;
+
+    private List<String> heatingTypes;
 }
