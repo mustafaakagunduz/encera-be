@@ -64,7 +64,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         // Auth endpoint'leri - herkese açık
                         .requestMatchers("/api/auth/register").permitAll()
@@ -78,6 +78,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/forgot-password").permitAll()
                         .requestMatchers("/api/auth/reset-password").permitAll()
                         .requestMatchers("/api/auth/validate-reset-token").permitAll()
+
+                        // OAuth2 endpoint'leri
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/login/oauth2/**").permitAll()
 
                         // Property Public endpoint'ler - herkese açık
                         .requestMatchers("/api/properties/public/**").permitAll()
@@ -107,6 +111,13 @@ public class SecurityConfig {
 
                         // Diğer tüm istekler kimlik doğrulaması gerektirir
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .redirectionEndpoint(redirect -> redirect
+                                .baseUri("/login/oauth2/code/*")
+                        )
+                        .defaultSuccessUrl("/oauth2/callback/google", true)
+                        .failureUrl("/oauth2/callback/google?error=true")
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

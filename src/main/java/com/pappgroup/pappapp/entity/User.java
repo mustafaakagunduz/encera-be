@@ -27,7 +27,7 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Column(nullable = false)
@@ -71,4 +71,13 @@ public class User {
 
     @Column(name = "reset_token_expires_at")
     private LocalDateTime resetTokenExpiresAt;
+
+    @Column(name = "oauth_provider")
+    private String oauthProvider;
+
+    @Column(name = "oauth_id")
+    private String oauthId;
+
+    @Column(name = "is_oauth_user")
+    private Boolean isOauthUser = false;
 }
