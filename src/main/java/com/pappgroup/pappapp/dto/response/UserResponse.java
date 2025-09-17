@@ -16,4 +16,22 @@ public class UserResponse {
     private boolean enabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // Profile fields
+    private String bio;
+    private String location;
+    private String profilePictureUrl;
+
+    // Verification status
+    private Boolean isVerified;
+    private Boolean isPhoneVerified;
+
+    // User preferences
+    private String preferredLanguage;
+    private String themePreference;
+    private Boolean emailNotificationsEnabled;
+    private Boolean smsNotificationsEnabled;
+    private Boolean newListingAlertsEnabled;
+    private Boolean priceChangeAlertsEnabled;
+    private Boolean marketingEmailsEnabled;
 }

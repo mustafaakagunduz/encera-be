@@ -18,6 +18,10 @@ public class VerificationUtils {
         return code.toString();
     }
 
+    public static String generateCode() {
+        return generateRandomCode(6);
+    }
+
     public static boolean isCodeExpired(LocalDateTime expiryTime) {
         return expiryTime != null && expiryTime.isBefore(LocalDateTime.now());
     }

@@ -1,8 +1,15 @@
 package com.pappgroup.pappapp.controller;
 
 import com.pappgroup.pappapp.dto.request.ChangePasswordRequest;
+import com.pappgroup.pappapp.dto.request.ProfileUpdateRequest;
+import com.pappgroup.pappapp.dto.request.UserPreferencesUpdateRequest;
+import com.pappgroup.pappapp.dto.request.PhoneVerificationRequest;
+import com.pappgroup.pappapp.dto.request.PhoneVerificationCodeRequest;
 import com.pappgroup.pappapp.dto.response.UserResponse;
+import com.pappgroup.pappapp.dto.response.ErrorResponse;
+import com.pappgroup.pappapp.dto.response.SuccessResponse;
 import com.pappgroup.pappapp.service.UserService;
+import com.pappgroup.pappapp.service.PhoneVerificationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"}, allowCredentials = "true")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PhoneVerificationService phoneVerificationService;
 
     @GetMapping("/profile")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -32,13 +42,26 @@ public class UserController {
 
     @PutMapping("/profile")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<?> updateProfile(@Valid @RequestBody UserResponse request) {
+    public ResponseEntity<?> updateProfile(@Valid @RequestBody ProfileUpdateRequest request) {
         try {
             UserResponse response = userService.updateProfile(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     new ErrorResponse("Failed to update profile", e.getMessage())
+            );
+        }
+    }
+
+    @PutMapping("/preferences")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> updatePreferences(@Valid @RequestBody UserPreferencesUpdateRequest request) {
+        try {
+            UserResponse response = userService.updatePreferences(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("Failed to update preferences", e.getMessage())
             );
         }
     }
@@ -56,30 +79,42 @@ public class UserController {
         }
     }
 
-    // Inner classes for responses
-    public static class ErrorResponse {
-        private String error;
-        private String message;
-
-        public ErrorResponse(String error, String message) {
-            this.error = error;
-            this.message = message;
+    @PostMapping("/send-phone-verification")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> sendPhoneVerification(@Valid @RequestBody PhoneVerificationRequest request) {
+        try {
+            phoneVerificationService.sendPhoneVerificationCode(request.getPhoneNumber());
+            return ResponseEntity.ok(new SuccessResponse("Verification code sent to your phone"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("Failed to send verification code", e.getMessage())
+            );
         }
-
-        public String getError() { return error; }
-        public void setError(String error) { this.error = error; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
     }
 
-    public static class SuccessResponse {
-        private String message;
-
-        public SuccessResponse(String message) {
-            this.message = message;
+    @PostMapping("/verify-phone")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> verifyPhone(@Valid @RequestBody PhoneVerificationCodeRequest request) {
+        try {
+            phoneVerificationService.verifyPhoneCode(request.getPhoneNumber(), request.getVerificationCode());
+            return ResponseEntity.ok(new SuccessResponse("Phone number verified successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("Failed to verify phone number", e.getMessage())
+            );
         }
+    }
 
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+    @PostMapping("/upload-profile-picture")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> uploadProfilePicture(@RequestParam("profilePictureUrl") String profilePictureUrl) {
+        try {
+            userService.updateProfilePicture(profilePictureUrl);
+            return ResponseEntity.ok(new SuccessResponse("Profile picture updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("Failed to update profile picture", e.getMessage())
+            );
+        }
     }
 }
