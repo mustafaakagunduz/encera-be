@@ -98,34 +98,34 @@ public class User {
     @Column(name = "phone_verification_code_expires_at")
     private LocalDateTime phoneVerificationCodeExpiresAt;
 
-    @Column(name = "is_phone_verified", columnDefinition = "boolean default false")
+    @Column(name = "is_phone_verified")
     private Boolean isPhoneVerified = false;
 
-    @Column(name = "max_phone_verification_attempts", columnDefinition = "integer default 0")
+    @Column(name = "max_phone_verification_attempts")
     private Integer maxPhoneVerificationAttempts = 0;
 
     @Column(name = "last_phone_verification_attempt")
     private LocalDateTime lastPhoneVerificationAttempt;
 
     // User preferences
-    @Column(name = "preferred_language", columnDefinition = "varchar(10) default 'tr'")
+    @Column(name = "preferred_language", length = 10)
     private String preferredLanguage = "tr";
 
-    @Column(name = "theme_preference", columnDefinition = "varchar(20) default 'light'")
+    @Column(name = "theme_preference", length = 20)
     private String themePreference = "light";
 
-    @Column(name = "email_notifications_enabled", columnDefinition = "boolean default true")
+    @Column(name = "email_notifications_enabled")
     private Boolean emailNotificationsEnabled = true;
 
-    @Column(name = "sms_notifications_enabled", columnDefinition = "boolean default false")
+    @Column(name = "sms_notifications_enabled")
     private Boolean smsNotificationsEnabled = false;
 
-    @Column(name = "new_listing_alerts_enabled", columnDefinition = "boolean default true")
+    @Column(name = "new_listing_alerts_enabled")
     private Boolean newListingAlertsEnabled = true;
 
-    @Column(name = "price_change_alerts_enabled", columnDefinition = "boolean default true")
+    @Column(name = "price_change_alerts_enabled")
     private Boolean priceChangeAlertsEnabled = true;
 
-    @Column(name = "marketing_emails_enabled", columnDefinition = "boolean default false")
+    @Column(name = "marketing_emails_enabled")
     private Boolean marketingEmailsEnabled = false;
 }
