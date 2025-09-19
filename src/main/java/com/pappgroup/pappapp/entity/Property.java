@@ -79,8 +79,9 @@ public class Property {
     @Column(nullable = false)
     private Boolean furnished = false;
 
-    @Embedded
-    private RoomConfiguration roomConfiguration;
+    private Integer roomCount;
+
+    private Integer hallCount;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal monthlyFee;

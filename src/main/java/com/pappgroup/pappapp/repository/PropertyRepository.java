@@ -128,12 +128,13 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     // ========== GELİŞMİŞ FİLTRELEME ==========
 
-    @Query("SELECT p FROM Property p WHERE " +
+    @Query(value = "SELECT p FROM Property p WHERE " +
             "p.approved = true AND p.active = true AND " +
             "(:listingType IS NULL OR p.listingType = :listingType) AND " +
             "(:propertyType IS NULL OR p.propertyType = :propertyType) AND " +
-            "(:city IS NULL OR UPPER(p.city) = UPPER(:city)) AND " +
-            "(:district IS NULL OR UPPER(p.district) = UPPER(:district)) AND " +
+            "(:city IS NULL OR p.city = :city) AND " +
+            "(:district IS NULL OR p.district = :district) AND " +
+            "(:neighborhood IS NULL OR p.neighborhood = :neighborhood) AND " +
             "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
             "(:minArea IS NULL OR p.grossArea >= :minArea) AND " +
@@ -143,11 +144,18 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             "(:parking IS NULL OR p.parking = :parking) AND " +
             "(:balcony IS NULL OR p.balcony = :balcony) AND " +
             "(:security IS NULL OR p.security = :security) AND " +
-            "(:minRoomCount IS NULL OR p.roomConfiguration.roomCount >= :minRoomCount)")
+            "(:negotiable IS NULL OR p.negotiable = :negotiable) AND " +
+            "(:featured IS NULL OR p.featured = :featured) AND " +
+            "(:pappSellable IS NULL OR p.pappSellable = :pappSellable) AND " +
+            "(:minRoomCount IS NULL OR (p.roomCount IS NOT NULL AND p.roomCount >= :minRoomCount)) AND " +
+            "(:maxRoomCount IS NULL OR (p.roomCount IS NOT NULL AND p.roomCount <= :maxRoomCount)) AND " +
+            "(:hallCount IS NULL OR (p.hallCount IS NOT NULL AND p.hallCount = :hallCount)) AND " +
+            "(:keyword IS NULL)")
     Page<Property> findActivePropertiesWithFilters(@Param("listingType") ListingType listingType,
                                                    @Param("propertyType") PropertyType propertyType,
                                                    @Param("city") String city,
                                                    @Param("district") String district,
+                                                   @Param("neighborhood") String neighborhood,
                                                    @Param("minPrice") BigDecimal minPrice,
                                                    @Param("maxPrice") BigDecimal maxPrice,
                                                    @Param("minArea") Integer minArea,
@@ -157,6 +165,12 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                                                    @Param("parking") Boolean parking,
                                                    @Param("balcony") Boolean balcony,
                                                    @Param("security") Boolean security,
+                                                   @Param("negotiable") Boolean negotiable,
+                                                   @Param("featured") Boolean featured,
+                                                   @Param("pappSellable") Boolean pappSellable,
                                                    @Param("minRoomCount") Integer minRoomCount,
+                                                   @Param("maxRoomCount") Integer maxRoomCount,
+                                                   @Param("hallCount") Integer hallCount,
+                                                   @Param("keyword") String keyword,
                                                    Pageable pageable);
 }

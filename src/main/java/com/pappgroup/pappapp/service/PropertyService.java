@@ -7,6 +7,7 @@ import com.pappgroup.pappapp.dto.response.PropertyResponse;
 import com.pappgroup.pappapp.dto.response.PropertyStatsResponse;
 import com.pappgroup.pappapp.dto.response.PropertySummaryResponse;
 import com.pappgroup.pappapp.entity.Property;
+import com.pappgroup.pappapp.entity.RoomConfiguration;
 import com.pappgroup.pappapp.entity.User;
 import com.pappgroup.pappapp.enums.ListingType;
 import com.pappgroup.pappapp.enums.PropertyType;
@@ -91,11 +92,20 @@ public class PropertyService {
     }
 
     public Page<PropertySummaryResponse> searchProperties(PropertySearchRequest searchRequest, Pageable pageable) {
+        System.out.println("=== DEBUG: Search Properties Request ===");
+        System.out.println("ListingType: " + searchRequest.getListingType());
+        System.out.println("PropertyType: " + searchRequest.getPropertyType());
+        System.out.println("City: " + searchRequest.getCity());
+        System.out.println("District: " + searchRequest.getDistrict());
+        System.out.println("MinPrice: " + searchRequest.getMinPrice());
+        System.out.println("MaxPrice: " + searchRequest.getMaxPrice());
+
         Page<Property> properties = propertyRepository.findActivePropertiesWithFilters(
                 searchRequest.getListingType(),
                 searchRequest.getPropertyType(),
-                searchRequest.getCity(),
-                searchRequest.getDistrict(),
+                normalizeText(searchRequest.getCity()),
+                normalizeText(searchRequest.getDistrict()),
+                normalizeText(searchRequest.getNeighborhood()),
                 searchRequest.getMinPrice(),
                 searchRequest.getMaxPrice(),
                 searchRequest.getMinArea(),
@@ -105,9 +115,23 @@ public class PropertyService {
                 searchRequest.getParking(),
                 searchRequest.getBalcony(),
                 searchRequest.getSecurity(),
+                searchRequest.getNegotiable(),
+                searchRequest.getFeatured(),
+                searchRequest.getPappSellable(),
+               
                 searchRequest.getMinRoomCount(),
+                searchRequest.getMaxRoomCount(),
+                searchRequest.getHallCount(),
+                normalizeText(searchRequest.getKeyword()),
                 pageable
         );
+
+        System.out.println("=== DEBUG: Query Result ===");
+        System.out.println("Total Elements: " + properties.getTotalElements());
+        System.out.println("Total Pages: " + properties.getTotalPages());
+        System.out.println("Current Page: " + properties.getNumber());
+        System.out.println("Content Size: " + properties.getContent().size());
+
         return properties.map(this::convertToSummaryResponse);
     }
 
@@ -396,7 +420,11 @@ public class PropertyService {
         property.setDescription(request.getDescription());
         property.setFurnished(request.getFurnished());
         property.setPappSellable(request.getPappSellable()); // YENİ ALAN EKLENDİ
-        property.setRoomConfiguration(request.getRoomConfiguration());
+        // RoomConfiguration artık ayrı alanlar
+        if (request.getRoomConfiguration() != null) {
+            property.setRoomCount(request.getRoomConfiguration().roomCount());
+            property.setHallCount(request.getRoomConfiguration().hallCount());
+        }
         property.setMonthlyFee(request.getMonthlyFee());
         property.setDeposit(request.getDeposit());
     }
@@ -418,7 +446,11 @@ public class PropertyService {
         property.setSecurity(request.getSecurity());
         property.setDescription(request.getDescription());
         property.setFurnished(request.getFurnished());
-        property.setRoomConfiguration(request.getRoomConfiguration());
+        // RoomConfiguration artık ayrı alanlar
+        if (request.getRoomConfiguration() != null) {
+            property.setRoomCount(request.getRoomConfiguration().roomCount());
+            property.setHallCount(request.getRoomConfiguration().hallCount());
+        }
         property.setMonthlyFee(request.getMonthlyFee());
         property.setDeposit(request.getDeposit());
 
@@ -468,7 +500,11 @@ public class PropertyService {
         response.setFeatured(property.getFeatured());
         response.setPappSellable(property.getPappSellable());
         response.setFurnished(property.getFurnished());
-        response.setRoomConfiguration(property.getRoomConfiguration());
+        // RoomConfiguration artık ayrı alanlar
+        if (property.getRoomCount() != null && property.getHallCount() != null) {
+            RoomConfiguration roomConfig = new RoomConfiguration(property.getRoomCount(), property.getHallCount());
+            response.setRoomConfiguration(roomConfig);
+        }
         response.setMonthlyFee(property.getMonthlyFee());
         response.setDeposit(property.getDeposit());
 
@@ -509,13 +545,26 @@ public class PropertyService {
         response.setParking(property.getParking());
         response.setBalcony(property.getBalcony());
         response.setFurnished(property.getFurnished());
-        response.setRoomConfiguration(property.getRoomConfiguration());
+        // RoomConfiguration artık ayrı alanlar
+        if (property.getRoomCount() != null && property.getHallCount() != null) {
+            RoomConfiguration roomConfig = new RoomConfiguration(property.getRoomCount(), property.getHallCount());
+            response.setRoomConfiguration(roomConfig);
+        }
         response.setFeatured(property.getFeatured());
         response.setPappSellable(property.getPappSellable());
         response.setViewCount(property.getViewCount());
         response.setCreatedAt(property.getCreatedAt());
 
         return response;
+    }
+
+    private String normalizeText(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     private User getCurrentUser() {

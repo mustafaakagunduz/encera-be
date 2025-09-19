@@ -173,6 +173,7 @@ public class PropertyController {
             @RequestParam(required = false) PropertyType propertyType,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String district,
+            @RequestParam(required = false) String neighborhood,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Integer minArea,
@@ -182,7 +183,13 @@ public class PropertyController {
             @RequestParam(required = false) Boolean parking,
             @RequestParam(required = false) Boolean balcony,
             @RequestParam(required = false) Boolean security,
+            @RequestParam(required = false) Boolean negotiable,
+            @RequestParam(required = false) Boolean featured,
+            @RequestParam(required = false) Boolean pappSellable,
             @RequestParam(required = false) Integer minRoomCount,
+            @RequestParam(required = false) Integer maxRoomCount,
+            @RequestParam(required = false) Integer hallCount,
+            @RequestParam(required = false) String keyword,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
             PropertySearchRequest searchRequest = new PropertySearchRequest();
@@ -190,6 +197,7 @@ public class PropertyController {
             searchRequest.setPropertyType(propertyType);
             searchRequest.setCity(city);
             searchRequest.setDistrict(district);
+            searchRequest.setNeighborhood(neighborhood);
             searchRequest.setMinPrice(minPrice);
             searchRequest.setMaxPrice(maxPrice);
             searchRequest.setMinArea(minArea);
@@ -199,7 +207,13 @@ public class PropertyController {
             searchRequest.setParking(parking);
             searchRequest.setBalcony(balcony);
             searchRequest.setSecurity(security);
+            searchRequest.setNegotiable(negotiable);
+            searchRequest.setFeatured(featured);
+            searchRequest.setPappSellable(pappSellable);
             searchRequest.setMinRoomCount(minRoomCount);
+            searchRequest.setMaxRoomCount(maxRoomCount);
+            searchRequest.setHallCount(hallCount);
+            searchRequest.setKeyword(keyword);
 
             Page<PropertySummaryResponse> properties = propertyService.searchProperties(searchRequest, pageable);
             return ResponseEntity.ok(properties);

@@ -3,6 +3,7 @@ package com.pappgroup.pappapp.service;
 import com.pappgroup.pappapp.dto.response.PropertyResponse;
 import com.pappgroup.pappapp.entity.Favorite;
 import com.pappgroup.pappapp.entity.Property;
+import com.pappgroup.pappapp.entity.RoomConfiguration;
 import com.pappgroup.pappapp.entity.User;
 import com.pappgroup.pappapp.repository.FavoriteRepository;
 import com.pappgroup.pappapp.repository.PropertyRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.Set;
@@ -116,7 +118,11 @@ public class FavoriteService {
         response.setFeatured(property.getFeatured());
         response.setPappSellable(property.getPappSellable());
         response.setFurnished(property.getFurnished());
-        response.setRoomConfiguration(property.getRoomConfiguration());
+        // RoomConfiguration artık ayrı alanlar
+        if (property.getRoomCount() != null && property.getHallCount() != null) {
+            RoomConfiguration roomConfig = new RoomConfiguration(property.getRoomCount(), property.getHallCount());
+            response.setRoomConfiguration(roomConfig);
+        }
         response.setMonthlyFee(property.getMonthlyFee());
         response.setDeposit(property.getDeposit());
         response.setBuildingAge(property.getBuildingAge());

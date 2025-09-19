@@ -48,6 +48,7 @@ public class PropertySearchRequest {
     // Oda sayısı filtreleme
     private Integer minRoomCount;
     private Integer maxRoomCount;
+    private Integer hallCount;
 
     // Sorting options
     private String sortBy = "createdAt"; // createdAt, price, viewCount
