@@ -117,4 +117,17 @@ public class UserController {
             );
         }
     }
+
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            UserResponse userResponse = userService.getUserById(userId);
+            return ResponseEntity.ok(userResponse);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("Failed to get user", e.getMessage())
+            );
+        }
+    }
 }
