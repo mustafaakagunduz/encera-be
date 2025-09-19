@@ -89,6 +89,10 @@ public class PropertyResponse {
 
     private LocalDateTime lastPublished;
 
+    private Long approvedBy;
+
+    private LocalDateTime lastReportedAt;
+
     // İç sınıf - Güvenlik için sadece gerekli bilgiler
     @Data
     public static class PropertyOwnerResponse {
@@ -96,6 +100,16 @@ public class PropertyResponse {
         private String firstName;
         private String lastName;
         private String phoneNumber;
+        private String email;
 
+    }
+
+    @Data
+    public static class Owner {
+        private Long id;
+        private String firstName;
+        private String lastName;
+        private String phoneNumber;
+        private String email;
     }
 }

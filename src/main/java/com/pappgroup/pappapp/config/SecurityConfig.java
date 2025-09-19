@@ -49,7 +49,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -109,6 +109,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/listings/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/listings/user/create").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/messages/**").hasAnyRole("USER", "ADMIN")
+
+                        // Favorites endpoint'leri
+                        .requestMatchers("/api/favorites/**").hasAnyRole("USER", "ADMIN")
 
                         // Diğer tüm istekler kimlik doğrulaması gerektirir
                         .anyRequest().authenticated()
