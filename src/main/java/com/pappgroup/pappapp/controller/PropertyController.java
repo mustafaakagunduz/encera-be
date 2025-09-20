@@ -258,6 +258,19 @@ public class PropertyController {
         }
     }
 
+    // Belirli kullanıcının aktif ve onaylanmış ilanları (public endpoint)
+    @GetMapping("/public/user/{userId}")
+    public ResponseEntity<Page<PropertySummaryResponse>> getPropertiesByUserId(
+            @PathVariable Long userId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        try {
+            Page<PropertySummaryResponse> properties = propertyService.getPropertiesByUserId(userId, pageable);
+            return ResponseEntity.ok(properties);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     // ========== KULLANICI ENDPOİNTLERİ ==========
 
     // Kullanıcının tüm ilanları (tam format)

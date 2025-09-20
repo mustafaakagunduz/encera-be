@@ -150,6 +150,17 @@ public class PropertyService {
         }
     }
 
+    public Page<PropertySummaryResponse> getPropertiesByUserId(Long userId, Pageable pageable) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+
+        User user = userOptional.get();
+        Page<Property> properties = propertyRepository.findByUserAndApprovedTrueAndActiveTrue(user, pageable);
+        return properties.map(this::convertToSummaryResponse);
+    }
+
     // ========== KULLANICI METODLARI ==========
 
     public Page<PropertyResponse> getCurrentUserProperties(Pageable pageable) {

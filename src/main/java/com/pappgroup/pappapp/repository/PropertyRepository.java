@@ -100,6 +100,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     // Kullanıcının onaylanmış ilanları
     Page<Property> findByUserAndApprovedTrue(User user, Pageable pageable);
 
+    // Kullanıcının onaylanmış ve aktif ilanları (public için)
+    Page<Property> findByUserAndApprovedTrueAndActiveTrue(User user, Pageable pageable);
+
     // ========== ŞİKAYET SİSTEMİ ==========
 
     // Şikayet edilmiş ilanlar (Admin için)

@@ -23,5 +23,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.property = :property")
     Long countByProperty(@Param("property") Property property);
 
+    // For getting comments about a specific user (comments on properties owned by the user)
+    Page<Comment> findByPropertyUserOrderByCreatedAtDesc(User propertyOwner, Pageable pageable);
+
+    @Query("SELECT AVG(c.rating) FROM Comment c WHERE c.property.user = :propertyOwner")
+    Double findAverageRatingByPropertyUser(@Param("propertyOwner") User propertyOwner);
+
+    @Query("SELECT COUNT(c) FROM Comment c WHERE c.property.user = :propertyOwner")
+    Long countByPropertyUser(@Param("propertyOwner") User propertyOwner);
+
     void deleteByUserAndProperty(User user, Property property);
 }

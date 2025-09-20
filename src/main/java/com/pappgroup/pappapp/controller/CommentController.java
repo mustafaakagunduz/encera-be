@@ -90,4 +90,29 @@ public class CommentController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<CommentResponse>> getCommentsByUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<CommentResponse> comments = commentService.getCommentsByUser(userId, page, size);
+            return ResponseEntity.ok(comments);
+        } catch (Exception e) {
+            log.error("Error getting comments for user {}: {}", userId, e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/user/{userId}/rating")
+    public ResponseEntity<PropertyRatingResponse> getUserRating(@PathVariable Long userId) {
+        try {
+            PropertyRatingResponse rating = commentService.getUserRating(userId);
+            return ResponseEntity.ok(rating);
+        } catch (Exception e) {
+            log.error("Error getting rating for user {}: {}", userId, e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

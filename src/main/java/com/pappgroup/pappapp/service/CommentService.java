@@ -112,6 +112,29 @@ public class CommentService {
         log.info("User {} deleted comment {}", userId, commentId);
     }
 
+    public Page<CommentResponse> getCommentsByUser(Long userId, int page, int size) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> comments = commentRepository.findByPropertyUserOrderByCreatedAtDesc(user, pageable);
+
+        return comments.map(this::convertToCommentResponse);
+    }
+
+    public PropertyRatingResponse getUserRating(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Double averageRating = commentRepository.findAverageRatingByPropertyUser(user);
+        Long totalComments = commentRepository.countByPropertyUser(user);
+
+        return new PropertyRatingResponse(
+                averageRating != null ? averageRating : 0.0,
+                totalComments
+        );
+    }
+
     private CommentResponse convertToCommentResponse(Comment comment) {
         CommentResponse response = new CommentResponse();
         response.setId(comment.getId());
