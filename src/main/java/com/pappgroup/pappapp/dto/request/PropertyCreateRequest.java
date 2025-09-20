@@ -85,4 +85,9 @@ public class PropertyCreateRequest {
     private Integer currentFloor;
 
     private List<String> heatingTypes;
+
+    // Resim yönetimi
+    private List<String> imageUrls;
+
+    private String primaryImageUrl;
 }

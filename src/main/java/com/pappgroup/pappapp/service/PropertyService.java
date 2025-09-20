@@ -210,6 +210,7 @@ public class PropertyService {
     public PropertyResponse createProperty(PropertyCreateRequest request) {
         User currentUser = getCurrentUser();
 
+
         Property property = new Property();
         mapCreateRequestToEntity(request, property);
         property.setUser(currentUser);
@@ -438,6 +439,17 @@ public class PropertyService {
         }
         property.setMonthlyFee(request.getMonthlyFee());
         property.setDeposit(request.getDeposit());
+
+        // Resim yönetimi
+        if (request.getImageUrls() != null) {
+            property.setImageUrls(request.getImageUrls());
+        }
+        if (request.getPrimaryImageUrl() != null) {
+            property.setPrimaryImageUrl(request.getPrimaryImageUrl());
+        } else if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+            // Eğer primaryImageUrl belirtilmemişse, ilk resmi birincil yap
+            property.setPrimaryImageUrl(request.getImageUrls().get(0));
+        }
     }
 
     private void mapUpdateRequestToEntity(PropertyUpdateRequest request, Property property) {
@@ -545,6 +557,7 @@ public class PropertyService {
 
     private PropertySummaryResponse convertToSummaryResponse(Property property) {
         PropertySummaryResponse response = new PropertySummaryResponse();
+
 
         response.setId(property.getId());
         response.setTitle(property.getTitle());
