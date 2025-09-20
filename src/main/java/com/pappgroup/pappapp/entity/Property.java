@@ -131,6 +131,15 @@ public class Property {
     @Column(name = "view_count", nullable = false)
     private Long viewCount = 0L;
 
+    // Resim yönetimi
+    @ElementCollection
+    @CollectionTable(name = "property_images", joinColumns = @JoinColumn(name = "property_id"))
+    @Column(name = "image_url", length = 500)
+    private List<String> imageUrls = new ArrayList<>();
+
+    @Column(name = "primary_image_url", length = 500)
+    private String primaryImageUrl;
+
     // User ile ilişki
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -110,6 +110,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/listings/user/create").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/messages/**").hasAnyRole("USER", "ADMIN")
 
+                        // File Upload endpoint'leri
+                        .requestMatchers("/api/upload/**").hasAnyRole("USER", "ADMIN")
+
                         // Favorites endpoint'leri
                         .requestMatchers("/api/favorites/**").hasAnyRole("USER", "ADMIN")
 

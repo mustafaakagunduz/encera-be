@@ -72,6 +72,11 @@ public class PropertyResponse {
 
     private LocalDateTime approvedAt;
 
+    // Resim yönetimi
+    private List<String> imageUrls;
+
+    private String primaryImageUrl;
+
     // İstatistikler
     private Long viewCount;
 
