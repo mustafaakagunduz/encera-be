@@ -512,6 +512,9 @@ public class PropertyService {
         response.setApproved(property.getApproved());
         response.setApprovedAt(property.getApprovedAt());
 
+        response.setImageUrls(property.getImageUrls());
+        response.setPrimaryImageUrl(property.getPrimaryImageUrl());
+
         response.setViewCount(property.getViewCount());
         response.setReported(property.getReported());
         response.setReportCount(property.getReportCount());
@@ -552,6 +555,7 @@ public class PropertyService {
         }
         response.setFeatured(property.getFeatured());
         response.setPappSellable(property.getPappSellable());
+        response.setPrimaryImageUrl(property.getPrimaryImageUrl());
         response.setViewCount(property.getViewCount());
         response.setCreatedAt(property.getCreatedAt());
 
@@ -573,5 +577,80 @@ public class PropertyService {
 
         return userRepository.findById(userPrincipal.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // ========== RESİM YÖNETİMİ ==========
+
+    @Transactional
+    public PropertyResponse addPropertyImages(Long propertyId, java.util.List<String> imageUrls) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        User currentUser = getCurrentUser();
+
+        if (!property.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You can only add images to your own properties");
+        }
+
+        if (property.getImageUrls() == null) {
+            property.setImageUrls(new java.util.ArrayList<>());
+        }
+
+        property.getImageUrls().addAll(imageUrls);
+
+        if (property.getPrimaryImageUrl() == null && !imageUrls.isEmpty()) {
+            property.setPrimaryImageUrl(imageUrls.get(0));
+        }
+
+        Property updatedProperty = propertyRepository.save(property);
+        return convertToResponse(updatedProperty);
+    }
+
+    @Transactional
+    public PropertyResponse removePropertyImage(Long propertyId, String imageUrl) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        User currentUser = getCurrentUser();
+
+        if (!property.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You can only remove images from your own properties");
+        }
+
+        if (property.getImageUrls() != null) {
+            property.getImageUrls().remove(imageUrl);
+        }
+
+        if (imageUrl.equals(property.getPrimaryImageUrl())) {
+            if (property.getImageUrls() != null && !property.getImageUrls().isEmpty()) {
+                property.setPrimaryImageUrl(property.getImageUrls().get(0));
+            } else {
+                property.setPrimaryImageUrl(null);
+            }
+        }
+
+        Property updatedProperty = propertyRepository.save(property);
+        return convertToResponse(updatedProperty);
+    }
+
+    @Transactional
+    public PropertyResponse setPrimaryImage(Long propertyId, String imageUrl) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        User currentUser = getCurrentUser();
+
+        if (!property.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You can only set primary image for your own properties");
+        }
+
+        if (property.getImageUrls() == null || !property.getImageUrls().contains(imageUrl)) {
+            throw new RuntimeException("Image URL not found in property images");
+        }
+
+        property.setPrimaryImageUrl(imageUrl);
+
+        Property updatedProperty = propertyRepository.save(property);
+        return convertToResponse(updatedProperty);
     }
 }

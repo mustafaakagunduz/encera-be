@@ -549,4 +549,48 @@ public class PropertyController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    // ========== RESİM YÖNETİMİ ENDPOİNTLERİ ==========
+
+    // İlana resim ekle
+    @PostMapping("/user/{id}/add-images")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<PropertyResponse> addPropertyImages(
+            @PathVariable Long id,
+            @RequestBody java.util.List<String> imageUrls) {
+        try {
+            PropertyResponse property = propertyService.addPropertyImages(id, imageUrls);
+            return ResponseEntity.ok(property);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // İlandan resim çıkar
+    @DeleteMapping("/user/{id}/remove-image")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<PropertyResponse> removePropertyImage(
+            @PathVariable Long id,
+            @RequestParam String imageUrl) {
+        try {
+            PropertyResponse property = propertyService.removePropertyImage(id, imageUrl);
+            return ResponseEntity.ok(property);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Birincil resmi ayarla
+    @PostMapping("/user/{id}/set-primary-image")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<PropertyResponse> setPrimaryImage(
+            @PathVariable Long id,
+            @RequestParam String imageUrl) {
+        try {
+            PropertyResponse property = propertyService.setPrimaryImage(id, imageUrl);
+            return ResponseEntity.ok(property);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

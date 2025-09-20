@@ -59,6 +59,6 @@ public class PropertySummaryResponse {
     // Tarih
     private LocalDateTime createdAt;
 
-    // Kapak fotoğrafı URL'i (ileride)
-    private String coverImageUrl;
+    // Birincil resim URL'i (ilan listelerinde gösterilir)
+    private String primaryImageUrl;
 }
