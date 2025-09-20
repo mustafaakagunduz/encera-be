@@ -2,6 +2,7 @@ package com.pappgroup.pappapp.controller;
 
 import com.pappgroup.pappapp.dto.response.UserResponse;
 import com.pappgroup.pappapp.service.AdminService;
+import com.pappgroup.pappapp.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,9 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private PropertyService propertyService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
@@ -75,6 +79,18 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     new ErrorResponse("Failed to get statistics", e.getMessage())
+            );
+        }
+    }
+
+    @PostMapping("/fix-property-images")
+    public ResponseEntity<?> makeAllPropertyImagesPublic() {
+        try {
+            propertyService.makeAllPropertyImagesPublic();
+            return ResponseEntity.ok(new SuccessResponse("All property images have been made public"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("Failed to make property images public", e.getMessage())
             );
         }
     }

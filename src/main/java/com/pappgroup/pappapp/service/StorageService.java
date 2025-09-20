@@ -10,6 +10,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 import jakarta.annotation.PostConstruct;
@@ -61,6 +63,7 @@ public class StorageService implements IStorageService {
                 .bucket(bucketName)
                 .key(key)
                 .contentType(file.getContentType())
+                .acl("public-read")
                 .build();
 
         s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(
@@ -80,6 +83,21 @@ public class StorageService implements IStorageService {
             s3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete file: " + e.getMessage());
+        }
+    }
+
+    public void makeFilePublic(String fileUrl) {
+        try {
+            String key = extractKeyFromUrl(fileUrl);
+            PutObjectAclRequest putObjectAclRequest = PutObjectAclRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+
+            s3Client.putObjectAcl(putObjectAclRequest);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to make file public: " + e.getMessage());
         }
     }
 

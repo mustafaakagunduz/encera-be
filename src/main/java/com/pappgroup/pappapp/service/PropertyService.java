@@ -32,6 +32,7 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
+    private final IStorageService storageService;
 
     // ========== PUBLIC METODLAR ==========
 
@@ -676,5 +677,36 @@ public class PropertyService {
 
         Property updatedProperty = propertyRepository.save(property);
         return convertToResponse(updatedProperty);
+    }
+
+    @Transactional
+    public void makeAllPropertyImagesPublic() {
+        try {
+            Page<Property> properties = propertyRepository.findAll(Pageable.unpaged());
+
+            for (Property property : properties.getContent()) {
+                // Primary image'ı public yap
+                if (property.getPrimaryImageUrl() != null && !property.getPrimaryImageUrl().isEmpty()) {
+                    try {
+                        storageService.makeFilePublic(property.getPrimaryImageUrl());
+                    } catch (Exception e) {
+                        System.err.println("Failed to make primary image public for property " + property.getId() + ": " + e.getMessage());
+                    }
+                }
+
+                // Diğer resimlerini public yap
+                if (property.getImageUrls() != null && !property.getImageUrls().isEmpty()) {
+                    for (String imageUrl : property.getImageUrls()) {
+                        try {
+                            storageService.makeFilePublic(imageUrl);
+                        } catch (Exception e) {
+                            System.err.println("Failed to make image public for property " + property.getId() + ": " + e.getMessage());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to make property images public: " + e.getMessage());
+        }
     }
 }

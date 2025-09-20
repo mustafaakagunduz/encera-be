@@ -10,6 +10,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 import jakarta.annotation.PostConstruct;
@@ -96,6 +98,21 @@ public class AwsStorageService implements IStorageService {
 
     private String getPublicUrl(String key) {
         return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key;
+    }
+
+    public void makeFilePublic(String fileUrl) {
+        try {
+            String key = extractKeyFromUrl(fileUrl);
+            PutObjectAclRequest putObjectAclRequest = PutObjectAclRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .acl(ObjectCannedACL.PUBLIC_READ)
+                    .build();
+
+            s3Client.putObjectAcl(putObjectAclRequest);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to make file public: " + e.getMessage());
+        }
     }
 
     private String extractKeyFromUrl(String fileUrl) {
